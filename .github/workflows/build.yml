@@ -21,7 +21,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      
+
+      - name: Set Commit Hash
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Setup JDK
         uses: actions/setup-java@v5
         with:
@@ -40,7 +43,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: Artifacts
+          name: build-${{ env.SHORT_SHA }}
           path: build/libs/
 
       - name: Publish to Maven
