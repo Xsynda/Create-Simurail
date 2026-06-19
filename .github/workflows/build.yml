@@ -1,11 +1,15 @@
 name: build
 on:
   push:
+    paths:
+      - 'src/**'
   pull_request:
+    paths:
+      - 'src/**'
   workflow_dispatch:
     inputs:
       publish:
-        description: 'Publish to Maven, Curseforge, and Modrinth'
+        description: 'Publish to Maven/Curseforge/Modrinth'
         required: false
         default: false
         type: boolean
@@ -43,6 +47,6 @@ jobs:
         if: ${{ inputs.publish }}
         run: ./gradlew publish --stacktrace -PCrystaelixMavenUsername="${{ secrets.MAVEN_USERNAME }}" -PCrystaelixMavenPassword="${{ secrets.MAVEN_PASSWORD }}"
 
-      - name: Publish to Curseforge and Modrinth
+      - name: Publish to Curseforge/Modrinth
         if: ${{ inputs.publish }}
         run: ./gradlew publishMods --stacktrace -Pcurseforge.token="${{ secrets.CURSEFORGE_TOKEN }}" -Pmodrinth.token="${{ secrets.MODRINTH_TOKEN }}"
