@@ -2,6 +2,7 @@ package com.crystaelix.simurail.config;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -14,7 +15,7 @@ public class SimurailConfig {
 
 	public static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 
-	//public static final SimurailCommonConfig COMMON;
+	//public static final SimurailCommonConfig common = new SimurailCommonConfig();
 	public static final SimurailServerConfig SERVER = new SimurailServerConfig();
 	public static final SimurailClientConfig CLIENT = new SimurailClientConfig();
 
@@ -22,19 +23,18 @@ public class SimurailConfig {
 		return CONFIGS.get(type);
 	}
 
-	private static <T extends ConfigBase> T register(T config, ModConfig.Type side) {
+	private static <T extends ConfigBase> void register(T config, ModConfig.Type side) {
 		Pair<T, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(builder -> {
 			config.registerAll(builder);
 			return config;
 		});
 		config.specification = specPair.getRight();
 		CONFIGS.put(side, config);
-		return config;
 	}
 
 	public static void register(ModContainer container) {
 		register(SERVER, ModConfig.Type.SERVER);
-
+		register(CLIENT, ModConfig.Type.CLIENT);
 
 		for(Map.Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet()) {
 			container.registerConfig(pair.getKey(), pair.getValue().specification);

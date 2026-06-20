@@ -12,7 +12,8 @@
 		"TrackBlockMixin",
 		"TrackBlockEntityMixin",
 
-		"compat.electroenergetics.PhysicsBogeyBlockMixin"
+		"compat.electroenergetics.PhysicsBogeyBlockMixin",
+		"compat.railways.TrackBufferBlockMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

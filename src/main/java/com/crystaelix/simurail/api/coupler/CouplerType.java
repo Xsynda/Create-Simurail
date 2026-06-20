@@ -1,10 +1,5 @@
 package com.crystaelix.simurail.api.coupler;
 
-import java.util.List;
-
-import com.crystaelix.simurail.api.bogey.BogeyType;
-import com.crystaelix.simurail.api.bogey.menu.BogeyDataOption;
-
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

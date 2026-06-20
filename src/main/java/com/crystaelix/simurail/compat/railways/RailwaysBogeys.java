@@ -8,11 +8,8 @@ import com.crystaelix.simurail.api.bogey.menu.BogeyEntry;
 import com.crystaelix.simurail.api.bogey.menu.BogeyEntryCategory;
 import com.crystaelix.simurail.api.bogey.menu.BogeyMenuManager;
 import com.crystaelix.simurail.api.bogey.menu.BogeyParentCategory;
-import com.crystaelix.simurail.api.bogey.menu.TrackTypeEntry;
 import com.railwayteam.railways.Railways;
-import com.railwayteam.railways.registry.CRBlocks;
 import com.railwayteam.railways.registry.CRBogeyStyles;
-import com.railwayteam.railways.registry.CRTrackMaterials;
 import com.railwayteam.railways.registry.CRTrackMaterials.CRTrackType;
 import com.simibubi.create.AllBogeyStyles;
 import com.simibubi.create.content.trains.bogey.BogeySizes;
@@ -221,31 +218,8 @@ public class RailwaysBogeys {
 					$3, $4,
 					$5, $6));
 
-	public static final TrackTypeEntry
-	MONORAIL = new TrackTypeEntry(
-			CRTrackType.MONORAIL,
-			Component.translatable("simurail_track_type.railways.monorail"),
-			Component.translatable("simurail_track_type.railways.monorail.short"),
-			true,
-			CRBlocks.MONORAIL_TRACK::getDefaultState),
-	NARROW = new TrackTypeEntry(
-			CRTrackType.NARROW_GAUGE,
-			Component.translatable("simurail_track_type.railways.narrow"),
-			Component.translatable("simurail_track_type.railways.narrow.short"),
-			false,
-			() -> CRTrackMaterials.NARROW_GAUGE_ANDESITE.getBlockSupplier().get().defaultBlockState()),
-	WIDE = new TrackTypeEntry(
-			CRTrackType.WIDE_GAUGE,
-			Component.translatable("simurail_track_type.railways.wide"),
-			Component.translatable("simurail_track_type.railways.wide.short"),
-			false,
-			() -> CRTrackMaterials.WIDE_GAUGE_ANDESITE.getBlockSupplier().get().defaultBlockState());
-
 	public static void register() {
 		BogeyMenuManager.addBogeyCategory(RAILWAYS);
-		BogeyMenuManager.addTrackTypeEntry(MONORAIL);
-		BogeyMenuManager.addTrackTypeEntry(NARROW);
-		BogeyMenuManager.addTrackTypeEntry(WIDE);
 
 		BogeyType.setDefault(CRTrackType.MONORAIL, false, MONOBOGEY.type());
 		BogeyType.setDefault(CRTrackType.MONORAIL, true, MONOBOGEY.type());

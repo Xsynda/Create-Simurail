@@ -2,9 +2,9 @@ package com.crystaelix.simurail.config;
 
 import net.createmod.catnip.config.ConfigBase;
 
-public class SimurailBlocksConfig extends ConfigBase {
+public class SimurailBlocksConfig extends SimurailBaseConfig {
 
-	//public final ConfigGroup connection = group(1, "steeringConnection", "Steering Connections");
+	public final ConfigGroup connection = group(1, "steeringConnection", "Steering Connections");
 	public final ConfigFloat bogeyConnectionRangeSame = f(32, 1, 256, "bogeyConnectionRangeSame", Units.length, Comments.bogeyConnectionRangeSame);
 	public final ConfigFloat bogeyConnectionRangeDifferent = f(12, 1, 256, "bogeyConnectionRangeDifferent", Units.length, Comments.bogeyConnectionRangeDifferent);
 	public final ConfigFloat couplerConnectionRange = f(4, 1, 256, "couplerConnectionRange", Units.length, Comments.couplerConnectionRange);

@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.crystaelix.simurail.Simurail;
-import com.simibubi.create.compat.Mods;
 
 import net.neoforged.fml.loading.LoadingModList;
 

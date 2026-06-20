@@ -2,7 +2,7 @@ package com.crystaelix.simurail.config;
 
 import net.createmod.catnip.config.ConfigBase;
 
-public class SimurailPhysicsConfig extends ConfigBase {
+public class SimurailPhysicsConfig extends SimurailBaseConfig {
 
 	public final ConfigGroup bogey = group(1, "bogey", "Physics Bogeys");
 	public final ConfigFloat bogeyPivotMass = f(1, 0, Float.MAX_VALUE, "bogeyPivotMass", Units.mass, Comments.bogeyPivotMass);
@@ -21,8 +21,8 @@ public class SimurailPhysicsConfig extends ConfigBase {
 	public final ConfigFloat axleSpacingUpdateTime = f(2, 0, Float.MAX_VALUE, "axleSpacingUpdateTime", Units.time, Comments.axleSpacingUpdateTime);
 	public final ConfigFloat axlePassiveLinearDamping = f(100, 0, Float.MAX_VALUE, "axlePassiveLinearDamping", Units.damping, Comments.axlePassiveLinearDamping);
 	public final ConfigFloat axlePassiveAngularDamping = f(1, 0, Float.MAX_VALUE, "axlePassiveAngularDamping", Units.angularDamping, Comments.axlePassiveAngularDamping);
-	public final ConfigFloat axleLateralMaxSpeedFactor = f(30, 0, Float.MAX_VALUE, "axleLateralMaxSpeedFactor", Units.acceleration, Comments.axleLateralMaxSpeedFactor);
-	public final ConfigFloat axleVerticalMaxSpeedFactor = f(50, 0, Float.MAX_VALUE, "axleVerticalMaxSpeedFactor", Units.acceleration, Comments.axleVerticalMaxSpeedFactor);
+	public final ConfigFloat axleStandardLateralMaxSpeedFactor = f(30, 0, Float.MAX_VALUE, "axleStandardLateralMaxSpeedFactor", Units.acceleration, Comments.axleStandardLateralMaxSpeedFactor);
+	public final ConfigFloat axleStandardVerticalMaxSpeedFactor = f(50, 0, Float.MAX_VALUE, "axleStandardVerticalMaxSpeedFactor", Units.acceleration, Comments.axleStandardVerticalMaxSpeedFactor);
 	public final ConfigFloat axleBrakeStrengthFactor = f(20, 0, Float.MAX_VALUE, "axleBrakeStrengthFactor", Units.force, Comments.axleBrakeStrengthFactor);
 	public final ConfigFloat axleTargetSpeedFactor = f(0.25F, 0, Float.MAX_VALUE, "axleTargetSpeedFactor", Units.velocity, Comments.axleTargetSpeedFactor);
 	public final ConfigFloat axleDriveForceFactor = f(0.5F, 0, Float.MAX_VALUE, "axleDriveForceFactor", Units.damping, Comments.axleDriveForceFactor);
@@ -55,8 +55,8 @@ public class SimurailPhysicsConfig extends ConfigBase {
 		static String axleSpacingUpdateTime = "Time to update the axle spacing when changed for the axles of the Physics Bogey.";
 		static String axlePassiveLinearDamping = "Passive linear damping between an axle of the Physics Bogey and its track.";
 		static String axlePassiveAngularDamping = "Passive angular damping between an axle of the Physics Bogey and its track.";
-		static String axleLateralMaxSpeedFactor = "Lateral max speed factor between an axle of the Physics Bogey and its track. Max speed is sqrt(factor / curvature).";
-		static String axleVerticalMaxSpeedFactor = "Vertical max speed factor between an axle of the Physics Bogey and its track. Max speed is sqrt(factor / curvature).";
+		static String axleStandardLateralMaxSpeedFactor = "Lateral max speed factor between an axle of the Physics Bogey and a standard track. Max speed is sqrt(factor / curvature).";
+		static String axleStandardVerticalMaxSpeedFactor = "Vertical max speed factor between an axle of the Physics Bogey and a standard track. Max speed is sqrt(factor / curvature).";
 		static String axleBrakeStrengthFactor = "Conversion of brake strength [0-1] to brake force between an axle of the Physics Bogey and its track.";
 		static String axleTargetSpeedFactor = "Conversion of RPM to target speed between an axle of the Physics Bogey and its track.";
 		static String axleDriveForceFactor = "Conversion of current and target speed difference to drive force between an axle of the Physics Bogey and its track.";

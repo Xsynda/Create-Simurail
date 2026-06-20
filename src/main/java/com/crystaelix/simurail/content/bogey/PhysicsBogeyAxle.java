@@ -16,6 +16,8 @@ import com.crystaelix.simurail.api.math.Frame3d;
 import com.crystaelix.simurail.api.math.SimurailMath;
 import com.crystaelix.simurail.api.physics.AttachableBoxPhysicsObject;
 import com.crystaelix.simurail.api.physics.SimurailJoints;
+import com.crystaelix.simurail.api.track.TrackTypeEntries;
+import com.crystaelix.simurail.api.track.TrackTypeEntry;
 import com.crystaelix.simurail.config.SimurailConfig;
 import com.crystaelix.simurail.config.SimurailPhysicsConfig;
 import com.crystaelix.simurail.content.track.CurvedTrackSegment;
@@ -378,7 +380,7 @@ public class PhysicsBogeyAxle {
 			return;
 		}
 
-		SimurailPhysicsConfig config = SimurailConfig.SERVER.physics;
+		TrackTypeEntry trackType = TrackTypeEntries.getEntry(trackSegment.material());
 
 		double yLimit = 0;
 		double zLimit = 0;
@@ -403,7 +405,7 @@ public class PhysicsBogeyAxle {
 		boolean checkVertical = bogey.isInverted() || !bogey.options.allowVerticalMovement;
 
 		if(kLateral > SimurailMath.EPSILON) {
-			double lateralMaxSpeedFactor = config.axleLateralMaxSpeedFactor.get();
+			double lateralMaxSpeedFactor = trackType.lateralMaxSpeedFactor().getAsDouble();
 			double maxSpeedSq = lateralMaxSpeedFactor / kLateral;
 			if(speedSq > maxSpeedSq) {
 				zLimit = Float.MAX_VALUE;
@@ -412,7 +414,7 @@ public class PhysicsBogeyAxle {
 
 		if(checkVertical) {
 			if(Math.abs(kVertical) > SimurailMath.EPSILON && (bogey.isInverted() ? kVertical > 0 : kVertical < 0)) {
-				double verticalMaxSpeedFactor = config.axleVerticalMaxSpeedFactor.get();
+				double verticalMaxSpeedFactor = trackType.verticalMaxSpeedFactor().getAsDouble();
 				double maxSpeedSq = verticalMaxSpeedFactor / Math.abs(kVertical);
 				if(speedSq > maxSpeedSq) {
 					yLimit = Float.MAX_VALUE;

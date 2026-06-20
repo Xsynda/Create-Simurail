@@ -11,7 +11,9 @@ import org.apache.commons.lang3.mutable.MutableObject;
 
 import com.crystaelix.simurail.api.bogey.BogeyRenderedType;
 import com.crystaelix.simurail.api.bogey.BogeyType;
-import com.crystaelix.simurail.content.SimurailBogeys;
+import com.crystaelix.simurail.api.track.TrackTypeEntries;
+import com.crystaelix.simurail.api.track.TrackTypeEntry;
+import com.crystaelix.simurail.content.SimurailTracks;
 import com.simibubi.create.content.trains.track.TrackMaterial.TrackType;
 
 import net.minecraft.resources.ResourceLocation;
@@ -20,8 +22,6 @@ public class BogeyMenuManager {
 
 	private static final List<BogeyCategory<?>> CATEGORIES = new ArrayList<>();
 	private static final Map<ResourceLocation, BogeyEntry> ENTRIES = new HashMap<>();
-
-	private static final Map<TrackType, TrackTypeEntry> TRACK_TYPES = new HashMap<>();
 
 	public static void addBogeyCategory(BogeyCategory<?> category) {
 		CATEGORIES.add(category);
@@ -49,10 +49,6 @@ public class BogeyMenuManager {
 			}
 		}
 		path.removeLast();
-	}
-
-	public static void addTrackTypeEntry(TrackTypeEntry entry) {
-		TRACK_TYPES.put(entry.trackType(), entry);
 	}
 
 	public static List<BogeyCategory<?>> getCategories() {
@@ -108,21 +104,14 @@ public class BogeyMenuManager {
 		return false;
 	}
 
-	public static TrackTypeEntry getTrackTypeEntry(TrackType trackType) {
-		if(TRACK_TYPES.containsKey(trackType)) {
-			return TRACK_TYPES.get(trackType);
-		}
-		return SimurailBogeys.STANDARD;
-	}
-
 	public static List<TrackTypeEntry> getTrackTypeEntries(BogeyType bogeyType) {
-		return bogeyType.trackTypes().stream().map(BogeyMenuManager::getTrackTypeEntry).distinct().toList();
+		return bogeyType.trackTypes().stream().map(TrackTypeEntries::getEntry).distinct().toList();
 	}
 
 	public static TrackTypeEntry getRenderTrackTypeEntry(BogeyType bogeyType, boolean inverted) {
 		if(inverted) {
 			Optional<TrackTypeEntry> trackType = bogeyType.trackTypes().stream().
-					map(BogeyMenuManager::getTrackTypeEntry).
+					map(TrackTypeEntries::getEntry).
 					filter(TrackTypeEntry::allowInverted).
 					findFirst();
 			if(trackType.isPresent()) {
@@ -131,9 +120,9 @@ public class BogeyMenuManager {
 			return getRenderTrackTypeEntry(bogeyType, false);
 		}
 		else if(bogeyType.trackTypes().contains(TrackType.STANDARD)) {
-			return SimurailBogeys.STANDARD;
+			return SimurailTracks.STANDARD;
 		}
-		return getTrackTypeEntry(bogeyType.trackTypes().stream().
+		return TrackTypeEntries.getEntry(bogeyType.trackTypes().stream().
 				filter(t -> t != TrackType.STANDARD).
 				findFirst().orElse(TrackType.STANDARD));
 	}

@@ -21,7 +21,7 @@ import com.crystaelix.simurail.api.bogey.menu.BogeyMenuItem;
 import com.crystaelix.simurail.api.bogey.menu.BogeyMenuManager;
 import com.crystaelix.simurail.api.bogey.menu.BogeyMenuSelection;
 import com.crystaelix.simurail.api.bogey.menu.BogeyParentCategory;
-import com.crystaelix.simurail.api.bogey.menu.TrackTypeEntry;
+import com.crystaelix.simurail.api.track.TrackTypeEntry;
 import com.crystaelix.simurail.content.SimurailBlocks;
 import com.crystaelix.simurail.content.SimurailGuiTextures;
 import com.crystaelix.simurail.content.SimurailItems;

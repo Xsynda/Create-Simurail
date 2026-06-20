@@ -22,7 +22,10 @@ public class SimurailMixinPlugin implements IMixinConfigPlugin {
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 		if(mixinClassName.contains("compat.electroenergetics")) {
-			return LoadingModList.get().getModFileById("electroenergetics") != null;
+			return isLoaded("electroenergetics");
+		}
+		if(mixinClassName.contains("compat.railways")) {
+			return isLoaded("railways");
 		}
 		return true;
 	}
@@ -40,4 +43,8 @@ public class SimurailMixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
+
+	public boolean isLoaded(String modId) {
+		return LoadingModList.get().getModFileById(modId) != null;
+	}
 }

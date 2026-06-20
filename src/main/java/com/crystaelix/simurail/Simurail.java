@@ -14,6 +14,7 @@ import com.crystaelix.simurail.content.SimurailItems;
 import com.crystaelix.simurail.content.SimurailMenus;
 import com.crystaelix.simurail.content.SimurailPackets;
 import com.crystaelix.simurail.content.SimurailSoundEvents;
+import com.crystaelix.simurail.content.SimurailTracks;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 
@@ -57,6 +58,7 @@ public class Simurail {
 	@SubscribeEvent
 	public void onCommonSetup(FMLCommonSetupEvent event) {
 		SimurailBogeys.register();
+		SimurailTracks.register();
 		SimurailCouplers.register();
 
 		event.enqueueWork(() -> {

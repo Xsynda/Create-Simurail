@@ -1,6 +1,5 @@
 package com.crystaelix.simurail.api.math;
 
-import org.joml.Matrix3d;
 import org.joml.Matrix3dc;
 import org.joml.Quaterniond;
 import org.joml.Quaterniondc;

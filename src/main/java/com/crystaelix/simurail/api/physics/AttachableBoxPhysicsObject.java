@@ -1,9 +1,5 @@
 package com.crystaelix.simurail.api.physics;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.joml.Vector3dc;
 
 import dev.ryanhcode.sable.api.physics.mass.MassData;

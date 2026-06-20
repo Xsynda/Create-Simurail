@@ -6,8 +6,6 @@ import com.crystaelix.simurail.api.bogey.BogeyType;
 import com.crystaelix.simurail.api.bogey.menu.BogeyEntry;
 import com.crystaelix.simurail.api.bogey.menu.BogeyEntryCategory;
 import com.crystaelix.simurail.api.bogey.menu.BogeyMenuManager;
-import com.crystaelix.simurail.api.bogey.menu.TrackTypeEntry;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllBogeyStyles;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.trains.bogey.BogeySizes;
@@ -29,17 +27,8 @@ public class SimurailBogeys {
 			Component.translatable("itemGroup.create.base"),
 			List.of(SMALL, LARGE));
 
-	public static final TrackTypeEntry
-	STANDARD = new TrackTypeEntry(
-			TrackType.STANDARD,
-			Component.translatable("simurail_track_type.create.standard"),
-			Component.translatable("simurail_track_type.create.standard.short"),
-			false,
-			AllBlocks.TRACK::getDefaultState);
-
 	public static void register() {
 		BogeyMenuManager.addBogeyCategory(CREATE);
-		BogeyMenuManager.addTrackTypeEntry(STANDARD);
 
 		BogeyType.setDefault(TrackType.STANDARD, false, SMALL.type());
 	}
