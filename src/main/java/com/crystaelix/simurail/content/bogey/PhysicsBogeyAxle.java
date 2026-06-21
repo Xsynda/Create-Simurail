@@ -386,15 +386,16 @@ public class PhysicsBogeyAxle {
 		double zLimit = 0;
 
 		if(!yFixed) {
-			double yDist = SimurailMath.projectTLinePoint(trackFrame.position, trackFrame.vertical, trackAxleFrame.position);
-			yLimit = Math.max(Math.abs(yDist) - 0.5 * timeStep, 0);
+			double yTime = bogey.options.allowVerticalMovement ? 20 : 10;
+			double yDist = Math.abs(SimurailMath.projectTLinePoint(trackFrame.position, trackFrame.vertical, trackAxleFrame.position));
+			yLimit = Math.max(Math.min(yDist - 0.5 * timeStep, yDist - yDist * yFixedTimer / yTime), 0);
 			yFixedTimer += timeStep;
-			yFixed = yLimit < 0.5 * timeStep || !bogey.options.allowVerticalMovement && yFixedTimer > 10 || yFixedTimer > 100;
+			yFixed = yLimit < 0.5 * timeStep || yFixedTimer > yTime;
 		}
 
 		if(!zFixed) {
-			double zDist = SimurailMath.projectTLinePoint(trackFrame.position, trackFrame.lateral, trackAxleFrame.position);
-			zLimit = Math.max(Math.abs(zDist) - 0.5 * timeStep, 0);
+			double zDist = Math.abs(SimurailMath.projectTLinePoint(trackFrame.position, trackFrame.lateral, trackAxleFrame.position));
+			zLimit = Math.max(Math.min(zDist - 0.5 * timeStep, zDist - zDist * zFixedTimer * 0.1), 0);
 			zFixedTimer += timeStep;
 			zFixed = zLimit < 0.5 * timeStep || zFixedTimer > 10;
 		}

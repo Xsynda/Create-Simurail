@@ -592,15 +592,17 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double offset = localPivotOffset.y;
 			double velocity = globalRelLinVel.dot(globalBasis.vertical);
 
-			double mass = massData.getMass();
+			double normalMass = 1 / massData.getInverseNormalMass(localCenter, SimurailMath.DIR_YP);
 
 			double frequency = config.bogeyVerticalSpringFrequency.get();
 			double dampingRate = config.bogeyVerticalSpringDampingRate.get();
-			double stiffness = mass * frequency * frequency;
-			double damping = mass * frequency * dampingRate * 2;
+			double stiffness = normalMass * frequency * frequency;
+			double damping = normalMass * frequency * dampingRate * 2;
 
 			double forceMag = stiffness * offset - damping * velocity;
 			forceMag /= bogeyCounts.activeVertical;
+			double maxForce = config.bogeyVerticalSpringMaxForce.get();
+			forceMag = Math.clamp(forceMag, -maxForce, maxForce);
 
 			queuedForce.fma(forceMag * timeStep, globalBasis.vertical);
 		}
@@ -610,15 +612,17 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double offset = localPivotOffset.dot(getLateral());
 			double velocity = globalRelLinVel.dot(globalBasis.lateral);
 
-			double mass = massData.getMass();
+			double normalMass = 1 / massData.getInverseNormalMass(localCenter, getLateral());
 
 			double frequency = config.bogeyLateralSpringFrequency.get();
 			double dampingRate = config.bogeyLateralSpringDampingRate.get();
-			double stiffness = mass * frequency * frequency;
-			double damping = mass * frequency * dampingRate * 2;
+			double stiffness = normalMass * frequency * frequency;
+			double damping = normalMass * frequency * dampingRate * 2;
 
 			double forceMag = stiffness * offset - damping * velocity;
 			forceMag /= bogeyCounts.activeLateral;
+			double maxForce = config.bogeyLateralSpringMaxForce.get();
+			forceMag = Math.clamp(forceMag, -maxForce, maxForce);
 
 			queuedForce.fma(forceMag * timeStep, globalBasis.lateral);
 		}
@@ -633,7 +637,9 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			double tilt = Math.clamp(Math.atan(centAcc / tiltFactor), -TILT_LIMIT, TILT_LIMIT);
 
 			double torqueOffset = massData.getCenterOfMass().y() - localCenter.y();
-			double centTorque = massData.getMass() * centAcc * torqueOffset;
+			offsetCenterOfMass.set(localCenter.x(), massData.getCenterOfMass().y(), localCenter.z());
+			double normalMass = 1 / massData.getInverseNormalMass(offsetCenterOfMass, getLateral());
+			double centTorque = normalMass * centAcc * torqueOffset;
 
 			double offset = SimurailMath.angle(globalBasis.vertical, globalPivotVert, globalBasis.direction) + tilt;
 			double velocity = globalRelAngVel.dot(globalBasis.direction);
@@ -949,6 +955,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	protected Vector3d globalPivotAngVel = new Vector3d();
 	protected Vector3d globalRelLinVel = new Vector3d();
 	protected Vector3d globalRelAngVel = new Vector3d();
+	protected Vector3d offsetCenterOfMass = new Vector3d();
 	protected Vector3d queuedForce = new Vector3d();
 	protected Vector3d queuedTorque = new Vector3d();
 }
