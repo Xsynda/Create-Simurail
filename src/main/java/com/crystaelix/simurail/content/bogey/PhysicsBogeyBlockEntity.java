@@ -831,8 +831,11 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	@Override
 	public void setBlockState(BlockState blockState) {
 		super.setBlockState(blockState);
+		if(!initialized) {
+			return;
+		}
 		if(!level.isClientSide()) {
-			if(Sable.HELPER.getContaining(this) instanceof ServerSubLevel subLevel) {
+			if(pivot != null && Sable.HELPER.getContaining(this) instanceof ServerSubLevel subLevel) {
 				removePivot(subLevel);
 				createPivot(subLevel);
 			}

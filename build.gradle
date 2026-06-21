@@ -198,8 +198,8 @@ dependencies {
 	runtimeOnly("com.copycatsplus:copycats:3.0.4+mc.1.21.1-neoforge") {transitive = false}
 	runtimeOnly "com.rbasamoyai:ritchiesprojectilelib:2.1.2+mc.1.21.1-neoforge"
 	runtimeOnly("com.rbasamoyai:createbigcannons:5.11.6+mc.1.21.1") {transitive = false}
-	//runtimeOnly "curse.maven:create-aeronauticstoolgun-1521349:8243840"
-	//runtimeOnly "curse.maven:create-aeronautics-transmission-linkage-1548056:8264158"
+	runtimeOnly "curse.maven:create-aeronauticstoolgun-1521349:8243840"
+	runtimeOnly "curse.maven:create-aeronautics-transmission-linkage-1548056:8264158"
 	runtimeOnly "curse.maven:drive-by-wire-with-sable-1520378:8101676"
 	runtimeOnly "curse.maven:create-deco-509285:7943181"
 
