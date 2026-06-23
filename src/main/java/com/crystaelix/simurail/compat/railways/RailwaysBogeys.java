@@ -73,7 +73,7 @@ public class RailwaysBogeys {
 			small(CRBogeyStyles.SINGLEAXLE)),
 	STANDARD_M_1 = new BogeyEntry(
 			Railways.asResource("standard/medium/1"),
-			small(CRBogeyStyles.MEDIUM_STANDARD)),
+			small(CRBogeyStyles.MEDIUM_SINGLE_WHEEL)),
 	TRAILING_M_1 = new BogeyEntry(
 			Railways.asResource("trailing/medium/1"),
 			small(CRBogeyStyles.MEDIUM_2_0_2_TRAILING)),
