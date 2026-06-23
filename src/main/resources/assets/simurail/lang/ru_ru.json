@@ -3,13 +3,13 @@
 	"block.simurail.automatic_coupler": "Авто-сцепка",
 
 	"item.simurail.inverted_physics_bogey": "Инвертированная физическая тележка",
-	"item.simurail.steering_connector": "Соединительная тяга",
+	"item.simurail.steering_connector": "Соединительный провод",
 
 	"item.simurail.steering_connector.same_block": "Та же позиция блока",
 	"item.simurail.steering_connector.out_of_range": "Вне диапазона",
 	"item.simurail.steering_connector.connected": "Привязано",
 	"item.simurail.steering_connector.disconnected": "Не привязано",
-	"item.simurail.steering_connector.terminated": "Выделение очищено",
+	"item.simurail.steering_connector.terminated": "Выбор сброшен",
 
 	"gui.simurail.no_options": "Нет настроек",
 
@@ -48,14 +48,14 @@
 	"gui.simurail.physics_bogey.page": "Страница",
 	"gui.simurail.physics_bogey.page_format": "Страница %1$s",
 	"gui.simurail.physics_bogey.data_option": "Опции рендера",
-	"gui.simurail.physics_bogey.axle_spacing": "Эффективная колесная база",
+	"gui.simurail.physics_bogey.axle_spacing": "Расстояние между осями",
 	"gui.simurail.physics_bogey.track_type": "Тип пути",
 	"gui.simurail.physics_bogey.options": "Изменить опции тележки",
 
 	"subtitles.simurail.block.coupler.connect": "Сцеплено",
 	"subtitles.simurail.block.coupler.disconnect": "Не сцеплено",
 
-	"simulated_section.simurail.simurail": "Simurail",
+	"simulated_section.simurail.simurail": "Симурэйл",
 
 	"simurail_bogey_entry.create.standard.small": "Create Стандарт S",
 	"simurail_bogey_entry.create.standard.large": "Create Стандарт L",
@@ -267,6 +267,6 @@
 	"simurail_track_type.railways.monorail.short": "M",
 	"simurail_track_type.railways.narrow": "Узкоколейная",
 	"simurail_track_type.railways.narrow.short": "N",
-	"simurail_track_type.railways.wide": "Широкая",
+	"simurail_track_type.railways.wide": "Ширококолейная",
 	"simurail_track_type.railways.wide.short": "W"
 }
