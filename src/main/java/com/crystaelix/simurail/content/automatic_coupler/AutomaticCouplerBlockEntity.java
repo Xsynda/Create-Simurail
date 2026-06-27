@@ -521,7 +521,7 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 									this.jointPos, partner.jointPos,
 									this.jointRot, partner.jointRot);
 							joint = physics.getPipeline().addConstraint(subLevel, partnerSubLevel, jointConfig);
-							joint.setLimit(ConstraintJointAxis.LINEAR_X, jointLength - 0.0625, jointLength + 0.0625);
+							joint.setLimit(ConstraintJointAxis.LINEAR_X, jointLength - 0.5, jointLength + 0.5);
 							joint.setMotor(ConstraintJointAxis.LINEAR_X, jointLength, stiffness, damping, false, 0);
 							joint.setMotor(ConstraintJointAxis.LINEAR_Y, 0, 0, linearDamping, false, 0);
 							joint.setMotor(ConstraintJointAxis.LINEAR_Z, 0, 0, linearDamping, false, 0);
@@ -533,7 +533,7 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 							joint.setFrame1(this.jointPos, this.jointRot);
 							joint.setFrame2(partner.jointPos, partner.jointRot);
 							if(jointLength != lastJointLength) {
-								joint.setLimit(ConstraintJointAxis.LINEAR_X, jointLength - 0.0625, jointLength + 0.0625);
+								joint.setLimit(ConstraintJointAxis.LINEAR_X, jointLength - 0.5, jointLength + 0.5);
 								joint.setMotor(ConstraintJointAxis.LINEAR_X, jointLength, stiffness, damping, false, 0);
 								physics.getPipeline().wakeUp(subLevel);
 							}

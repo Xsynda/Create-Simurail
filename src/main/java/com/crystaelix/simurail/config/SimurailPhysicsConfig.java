@@ -32,7 +32,7 @@ public class SimurailPhysicsConfig extends SimurailBaseConfig {
 	public final ConfigGroup coupler = group(1, "coupler", "Train Couplers");
 	public final ConfigFloat couplerPassiveLinearDamping = f(10, 0, Float.MAX_VALUE, "couplerPassiveLinearDamping", Units.damping, Comments.couplerPassiveLinearDamping);
 	public final ConfigFloat couplerPassiveAngularDamping = f(1, 0, Float.MAX_VALUE, "couplerPassiveAngularDamping", Units.angularDamping, Comments.couplerPassiveAngularDamping);
-	public final ConfigFloat couplerSpringFrequency = f(15, 0, Float.MAX_VALUE, "couplerSpringFrequency", Units.angularVelocity, Comments.couplerSpringFrequency);
+	public final ConfigFloat couplerSpringFrequency = f(100, 0, Float.MAX_VALUE, "couplerSpringFrequency", Units.angularVelocity, Comments.couplerSpringFrequency);
 	public final ConfigFloat couplerSpringDampingRate = f(2, 0, Float.MAX_VALUE, "couplerSpringDampingRate", Comments.couplerSpringDampingRate);
 
 	@Override
