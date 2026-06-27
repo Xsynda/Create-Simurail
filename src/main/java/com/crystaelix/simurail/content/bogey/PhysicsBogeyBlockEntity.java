@@ -894,6 +894,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 
 		if(tag.contains("options")) {
 			options.read(tag.getCompound("options"));
+			bogeyData = null;
 		}
 		if(tag.contains("custom_name")) {
 			customName = Component.Serializer.fromJson(tag.getString("custom_name"), registries);

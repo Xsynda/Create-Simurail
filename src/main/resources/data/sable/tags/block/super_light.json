@@ -1,5 +1,6 @@
 {
 	"values": [
-		"simurail:automatic_coupler"
+		"simurail:automatic_coupler",
+		"simurail:gangway_frame"
 	]
 }
