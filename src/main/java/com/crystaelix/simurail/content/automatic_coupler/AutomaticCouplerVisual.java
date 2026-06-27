@@ -65,7 +65,7 @@ public class AutomaticCouplerVisual extends AbstractBlockEntityVisual<AutomaticC
 
 		float partialTick = context.partialTick();
 		BlockPos visualPos = getVisualPosition();
-		
+
 		if(bar != null || head != null) {
 			couplerOffset.set(blockEntity.getDirection()).mul(-0.4375F);
 

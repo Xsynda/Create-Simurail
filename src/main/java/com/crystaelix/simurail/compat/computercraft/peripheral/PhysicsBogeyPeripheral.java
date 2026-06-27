@@ -13,115 +13,115 @@ public class PhysicsBogeyPeripheral extends SyncedPeripheral<PhysicsBogeyBlockEn
 	}
 
 	@Override
-	public String getType() {
+	public final String getType() {
 		return "Simurail_PhysicsBogey";
 	}
 
 	@LuaFunction
-	public boolean isPhysicsEnabled() {
+	public final boolean isPhysicsEnabled() {
 		return blockEntity.getOptions().enabled;
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setPhysicsEnabled(boolean enabled) {
+	public final void setPhysicsEnabled(boolean enabled) {
 		blockEntity.getOptions().enabled = enabled;
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public boolean allowsYawOffset() {
+	public final boolean allowsYawOffset() {
 		return blockEntity.getOptions().allowYawOffset;
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setAllowYawOffset(boolean allow) {
+	public final void setAllowYawOffset(boolean allow) {
 		blockEntity.getOptions().allowYawOffset = allow;
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public boolean allowsPitchOffset() {
+	public final boolean allowsPitchOffset() {
 		return blockEntity.getOptions().allowPitchOffset;
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setAllowPitchOffset(boolean allow) {
+	public final void setAllowPitchOffset(boolean allow) {
 		blockEntity.getOptions().allowPitchOffset = allow;
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public boolean allowsVerticalOffset() {
+	public final boolean allowsVerticalOffset() {
 		return blockEntity.getOptions().allowVerticalOffset;
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setAllowVerticalOffset(boolean allow) {
+	public final void setAllowVerticalOffset(boolean allow) {
 		blockEntity.getOptions().allowVerticalOffset = allow;
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public boolean allowsLateralOffset() {
+	public final boolean allowsLateralOffset() {
 		return blockEntity.getOptions().allowLateralOffset;
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setAllowLateralOffset(boolean allow) {
+	public final void setAllowLateralOffset(boolean allow) {
 		blockEntity.getOptions().allowLateralOffset = allow;
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public boolean allowsVerticalMovement() {
+	public final boolean allowsVerticalMovement() {
 		return blockEntity.getOptions().allowVerticalMovement;
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setAllowVerticalMovement(boolean allow) {
+	public final void setAllowVerticalMovement(boolean allow) {
 		blockEntity.getOptions().allowVerticalMovement = allow;
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public float getMaxStress() {
+	public final float getMaxStress() {
 		return blockEntity.getOptions().stress;
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setMaxStress(float stress) {
-		blockEntity.getOptions().stress = stress;
+	public final void setMaxStress(double stress) {
+		blockEntity.getOptions().stress = (float)stress;
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public int getControlMode() {
+	public final int getControlMode() {
 		return blockEntity.getOptions().controlMode.ordinal();
 	}
 
 	@LuaFunction(mainThread = true)
-	public void setControlMode(int mode) {
+	public final void setControlMode(int mode) {
 		blockEntity.getOptions().controlMode = PhysicsBogeyControlMode.BY_ID.apply(mode);
 		blockEntity.setChanged();
 	}
 
 	@LuaFunction
-	public boolean hasTrack() {
+	public final boolean hasTrack() {
 		return blockEntity.hasTrack();
 	}
 
 	@LuaFunction
-	public boolean isDerailed() {
+	public final boolean isDerailed() {
 		return blockEntity.isDerailed();
 	}
 
 	@LuaFunction
-	public double getLateralCurvature() {
+	public final double getLateralCurvature() {
 		return blockEntity.getLateralCurvature();
 	}
 
 	@LuaFunction
-	public double getVerticalCurvature() {
+	public final double getVerticalCurvature() {
 		return blockEntity.getVerticalCurvature();
 	}
 }

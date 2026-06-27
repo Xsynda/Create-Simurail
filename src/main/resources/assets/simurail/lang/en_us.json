@@ -1,6 +1,7 @@
 {
 	"block.simurail.physics_bogey": "Physics Bogie",
 	"block.simurail.automatic_coupler": "Automatic Coupler",
+	"block.simurail.gangway_frame": "Gangway Frame",
 
 	"item.simurail.inverted_physics_bogey": "Inverted Physics Bogie",
 	"item.simurail.steering_connector": "Steering Connector",
@@ -54,6 +55,8 @@
 
 	"subtitles.simurail.block.coupler.connect": "Coupler connects",
 	"subtitles.simurail.block.coupler.disconnect": "Coupler disconnects",
+	"subtitles.simurail.block.gangway.connect": "Gangway connects",
+	"subtitles.simurail.block.gangway.disconnect": "Gangway disconnects",
 
 	"simulated_section.simurail.simurail": "Simurail",
 

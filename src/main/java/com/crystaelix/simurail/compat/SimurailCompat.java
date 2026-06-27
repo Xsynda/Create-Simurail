@@ -13,9 +13,9 @@ public enum SimurailCompat {
 	BLOCKSBOGIES("create_bb"),
 	RAILWAYS(() -> isClassLoaded("com.railwayteam.railways.Railways"))
 	;
-	
+
 	public final BooleanSupplier isLoaded;
-	
+
 	SimurailCompat(BooleanSupplier isLoaded) {
 		this.isLoaded = isLoaded;
 	}
@@ -23,7 +23,7 @@ public enum SimurailCompat {
 	SimurailCompat(String modId) {
 		this(() -> LoadingModList.get().getModFileById(modId) != null);
 	}
-	
+
 	public boolean isLoaded() {
 		return isLoaded.getAsBoolean();
 	}

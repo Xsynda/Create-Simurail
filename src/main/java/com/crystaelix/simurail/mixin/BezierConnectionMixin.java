@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import com.crystaelix.simurail.api.extension.BezierConnectionExtension;
-import com.crystaelix.simurail.api.math.BezierControlPoints;
+import com.crystaelix.simurail.api.math.CubicBezier3dc;
 import com.crystaelix.simurail.api.math.SimurailMath;
 import com.simibubi.create.content.trains.track.BezierConnection;
 
@@ -16,12 +16,12 @@ public abstract class BezierConnectionMixin implements BezierConnectionExtension
 	public abstract double getHandleLength();
 
 	@Unique
-	private BezierControlPoints controlPoints;
+	private CubicBezier3dc controlPoints;
 	@Unique
 	private double quadratureLength;
 
 	@Override
-	public BezierControlPoints simurail$controlPoints() {
+	public CubicBezier3dc simurail$controlPoints() {
 		if(controlPoints == null) {
 			controlPoints = SimurailMath.controlPoints(BezierConnection.class.cast(this));
 		}
@@ -31,7 +31,7 @@ public abstract class BezierConnectionMixin implements BezierConnectionExtension
 	@Override
 	public double simurail$quadratureLength() {
 		if(quadratureLength == 0) {
-			quadratureLength = SimurailMath.bezierLength(simurail$controlPoints(), 0, 1);
+			quadratureLength = simurail$controlPoints().length(0, 1);
 		}
 		return 0;
 	}

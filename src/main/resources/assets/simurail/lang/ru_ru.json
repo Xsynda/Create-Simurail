@@ -1,6 +1,7 @@
 {
 	"block.simurail.physics_bogey": "Физическая тележка",
 	"block.simurail.automatic_coupler": "Авто-сцепка",
+	"block.simurail.gangway_frame": "Gangway Frame",
 
 	"item.simurail.inverted_physics_bogey": "Инвертированная физическая тележка",
 	"item.simurail.steering_connector": "Соединительный провод",
@@ -52,8 +53,10 @@
 	"gui.simurail.physics_bogey.track_type": "Тип пути",
 	"gui.simurail.physics_bogey.options": "Изменить опции тележки",
 
-	"subtitles.simurail.block.coupler.connect": "Сцеплено",
-	"subtitles.simurail.block.coupler.disconnect": "Не сцеплено",
+	"subtitles.simurail.block.coupler.connect": "Сцепка соединяется",
+	"subtitles.simurail.block.coupler.disconnect": "Сцепка расцепляется",
+	"subtitles.simurail.block.gangway.connect": "Gangway connects",
+	"subtitles.simurail.block.gangway.disconnect": "Gangway disconnects",
 
 	"simulated_section.simurail.simurail": "Симурэйл",
 

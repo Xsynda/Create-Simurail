@@ -1,6 +1,8 @@
 package com.crystaelix.simurail.content.automatic_coupler;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.joml.Quaterniond;
@@ -9,6 +11,7 @@ import org.joml.Vector3dc;
 
 import com.crystaelix.simurail.api.coupler.CouplerType;
 import com.crystaelix.simurail.api.coupler.CouplerTypeRegistry;
+import com.crystaelix.simurail.api.math.Quad3d;
 import com.crystaelix.simurail.api.math.SimurailMath;
 import com.crystaelix.simurail.api.physics.SimurailJoints;
 import com.crystaelix.simurail.api.util.SchematicContextUtil;
@@ -18,6 +21,8 @@ import com.crystaelix.simurail.config.SimurailPhysicsConfig;
 import com.crystaelix.simurail.content.SimurailCouplers;
 import com.crystaelix.simurail.content.SimurailSoundEvents;
 import com.crystaelix.simurail.content.bogey.PhysicsBogeyBlockEntity;
+import com.crystaelix.simurail.content.gangway_frame.GangwayFrame;
+import com.crystaelix.simurail.content.gangway_frame.GangwayFrameShape;
 import com.crystaelix.simurail.content.steering_connector.SteeringConnectable;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -34,6 +39,8 @@ import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -51,8 +58,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements BlockEntitySubLevelActor, SteeringConnectable {
+public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements BlockEntitySubLevelActor, SteeringConnectable, GangwayFrame {
 
 	public static final double SHORT_LENGTH = 0.5;
 	public static final double LONG_LENGTH = 1;
@@ -68,7 +77,19 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 	protected boolean connectedFront;
 
 	protected final Vector3dc localCenter;
+	protected double lastJointLength = 0;
 	protected GenericConstraintHandle joint;
+
+	protected BlockPos gangwayPartnerPos;
+	protected UUID gangwayPartnerSubLevelID;
+
+	protected Quad3d lastGangwayPartnerQuadOffset = new Quad3d();
+	protected Vector3d lastGangwayPartnerCenterOffset = new Vector3d();
+	protected Vector3d lastGangwayPartnerDir = new Vector3d();
+	protected boolean hasGangwayPartner = false;
+	public int gangwayTimer;
+
+	protected VoxelShape collisionShape = Shapes.empty();
 
 	public AutomaticCouplerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -110,6 +131,41 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 	@Override
 	public Direction getFacing() {
 		return getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+	}
+
+	@Override
+	public GangwayFrameShape getGangwayShape() {
+		return getBlockState().getValue(AutomaticCouplerBlock.GANGWAY_SHAPE);
+	}
+
+	@Override
+	public Vector3d getGangwayCenter(Vector3d dest) {
+		BlockPos pos = getBlockPos();
+		return getGangwayShape().center(getFacing(), dest).add(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	@Override
+	public Vector3dc getDirection() {
+		return switch(getFacing()) {
+		case EAST -> SimurailMath.DIR_XP;
+		case WEST -> SimurailMath.DIR_XN;
+		case SOUTH -> SimurailMath.DIR_ZP;
+		case NORTH -> SimurailMath.DIR_ZN;
+		case null, default -> throw new IllegalArgumentException("Unexpected value: " + getFacing());
+		};
+	}
+
+	@Override
+	public boolean isPowered() {
+		return getBlockState().getValue(BlockStateProperties.POWERED);
+	}
+
+	@Override
+	public boolean isGangwayPowered() {
+		if(isPowered()) {
+			return true;
+		}
+		return GangwayFrame.getNeighbors(this, level, 15).stream().anyMatch(GangwayFrame::isPowered);
 	}
 
 	@Override
@@ -210,24 +266,77 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 		setChanged();
 	}
 
+	@Override
+	public void setGangwayPartner(BlockPos gangwayPartnerPos) {
+		if(gangwayPartnerPos.equals(this.gangwayPartnerPos)) {
+			return;
+		}
+		if(level.getBlockEntity(gangwayPartnerPos) instanceof GangwayFrame partner &&
+				getGangwayShape().connectsTo() == partner.getGangwayShape()) {
+			SubLevel partnerSubLevel = Sable.HELPER.getContaining(level, gangwayPartnerPos);
+			if(this.gangwayPartnerPos != null) {
+				removeGangwayPartner();
+			}
+			this.gangwayPartnerPos = gangwayPartnerPos;
+			gangwayPartnerSubLevelID = partnerSubLevel == null ? null : partnerSubLevel.getUniqueId();
+			partner.setGangwayPartnerReverse(getBlockPos());
+			if(!level.isClientSide()) {
+				setChanged();
+				sendData();
+				level.playSound(null, getBlockPos(), SimurailSoundEvents.GANGWAY_CONNECT.get(), SoundSource.BLOCKS, 0.25F, 1F);
+				level.playSound(null, gangwayPartnerPos, SimurailSoundEvents.GANGWAY_CONNECT.get(), SoundSource.BLOCKS, 0.25F, 1F);
+			}
+		}
+	}
+
+	@Override
+	public void setGangwayPartnerReverse(BlockPos gangwayPartnerPos) {
+		this.gangwayPartnerPos = gangwayPartnerPos;
+		if(gangwayPartnerPos != null) {
+			SubLevel partnerSubLevel = Sable.HELPER.getContaining(level, gangwayPartnerPos);
+			gangwayPartnerSubLevelID = partnerSubLevel == null ? null : partnerSubLevel.getUniqueId();
+		}
+		else {
+			gangwayPartnerSubLevelID = null;
+		}
+		if(!level.isClientSide()) {
+			setChanged();
+			sendData();
+		}
+	}
+
+	@Override
+	public void removeGangwayPartner() {
+		if(gangwayPartnerPos == null) {
+			return;
+		}
+		if(gangwayPartnerPos != null && level.getBlockEntity(gangwayPartnerPos) instanceof GangwayFrame partner) {
+			partner.setGangwayPartnerReverse(null);
+			if(!level.isClientSide()) {
+				level.playSound(null, gangwayPartnerPos, SimurailSoundEvents.GANGWAY_DISCONNECT.get(), SoundSource.BLOCKS, 0.25F, 1F);
+			}
+		}
+		gangwayPartnerPos = null;
+		gangwayPartnerSubLevelID = null;
+		if(!level.isClientSide()) {
+			setChanged();
+			sendData();
+			level.playSound(null, getBlockPos(), SimurailSoundEvents.GANGWAY_DISCONNECT.get(), SoundSource.BLOCKS, 0.25F, 1F);
+		}
+	}
+
+	@Override
+	public GangwayFrame getGangwayPartner() {
+		if(gangwayPartnerPos != null && level.getBlockEntity(gangwayPartnerPos) instanceof GangwayFrame partner) {
+			return partner;
+		}
+		return null;
+	}
+
 	public void afterMove() {
 		if(partnerPos != null) {
 			setPartner(partnerPos);
 		}
-	}
-
-	public boolean isPowered() {
-		return getBlockState().getValue(BlockStateProperties.POWERED);
-	}
-
-	public Vector3dc getDirection() {
-		return switch(getFacing()) {
-		case EAST -> SimurailMath.DIR_XP;
-		case WEST -> SimurailMath.DIR_XN;
-		case SOUTH -> SimurailMath.DIR_ZP;
-		case NORTH -> SimurailMath.DIR_ZN;
-		case null, default -> throw new IllegalArgumentException("Unexpected value: " + getFacing());
-		};
 	}
 
 	public double getLength() {
@@ -248,12 +357,63 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 			return;
 		}
 		initialized = true;
+		hasGangwayPartner = getGangwayPartner() != null;
+		collisionShape = getBlockState().getShape(level, gangwayPartnerPos);
 	}
 
 	@Override
 	public void tick() {
 		init();
 		super.tick();
+		GangwayFrame gangwayPartner = getGangwayPartner();
+		if(gangwayPartner != null) {
+			BlockPos selfPos = getBlockPos();
+			BlockPos partnerPos = gangwayPartner.getBlockPos();
+
+			SubLevel selfSubLevel = Sable.HELPER.getContaining(this);
+			SubLevel partnerSubLevel = Sable.HELPER.getContaining(level, partnerPos);
+			Pose3dc selfPose = selfSubLevel == null ? SimurailMath.POSE_I : selfSubLevel.logicalPose();
+			Pose3dc partnerPose = partnerSubLevel == null ? SimurailMath.POSE_I : partnerSubLevel.logicalPose();
+
+			gangwayPartner.getGangwayShape().quad(gangwayPartner.getFacing(), lastGangwayPartnerQuadOffset);
+			lastGangwayPartnerQuadOffset.add(partnerPos.getX(), partnerPos.getY(), partnerPos.getZ());
+			gangwayPartner.getGangwayCenter(lastGangwayPartnerCenterOffset);
+			lastGangwayPartnerDir.set(gangwayPartner.getDirection());
+
+			lastGangwayPartnerQuadOffset.transformPosition(partnerPose);
+			partnerPose.transformPosition(lastGangwayPartnerCenterOffset);
+			partnerPose.transformNormal(lastGangwayPartnerDir);
+
+			lastGangwayPartnerQuadOffset.transformPositionInverse(selfPose);
+			lastGangwayPartnerQuadOffset.sub(selfPos.getX(), selfPos.getY(), selfPos.getZ());
+			selfPose.transformPositionInverse(lastGangwayPartnerCenterOffset);
+			lastGangwayPartnerCenterOffset.sub(selfPos.getX(), selfPos.getY(), selfPos.getZ());
+			selfPose.transformNormalInverse(lastGangwayPartnerDir);
+
+			getGangwayShape().center(getFacing(), gangwayCenterOffset);
+
+			double x = lastGangwayPartnerCenterOffset.x() - gangwayCenterOffset.x();
+			double y = lastGangwayPartnerCenterOffset.y() - gangwayCenterOffset.y();
+			double z = lastGangwayPartnerCenterOffset.z() - gangwayCenterOffset.z();
+			double length = getDirection().dot(x, y, z) * 0.625;
+
+			int index = Math.clamp((int)Math.round(length * 16) + 3, 0, 29);
+			collisionShape = switch(getGangwayShape()) {
+			case D -> AutomaticCouplerBlock.D_SHAPES[index].get(getFacing());
+			case U -> AutomaticCouplerBlock.U_SHAPES[index].get(getFacing());
+			case null, default -> getBlockState().getShape(level, getBlockPos());
+			};
+		}
+		else {
+			collisionShape = getBlockState().getShape(level, getBlockPos());
+		}
+		if(gangwayPartner != null != hasGangwayPartner) {
+			hasGangwayPartner = gangwayPartner != null;
+			gangwayTimer = 10 - gangwayTimer;
+		}
+		if(gangwayTimer > 0) {
+			gangwayTimer--;
+		}
 	}
 
 	@Override
@@ -279,6 +439,22 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 			}
 			if(partnerPos != null && !(level.getBlockEntity(partnerPos) instanceof AutomaticCouplerBlockEntity)) {
 				removePartner();
+			}
+			double maxDist = 6;
+			if(gangwayPartnerPos != null) {
+				if(level.getBlockEntity(gangwayPartnerPos) instanceof GangwayFrame partner) {
+					SubLevel selfSubLevel = Sable.HELPER.getContaining(this);
+					SubLevel otherSubLevel = Sable.HELPER.getContaining(level, gangwayPartnerPos);
+					if(selfSubLevel != otherSubLevel && Sable.HELPER.distanceSquaredWithSubLevels(level, getBlockPos().getCenter(), gangwayPartnerPos.getCenter()) > maxDist * maxDist) {
+						removeGangwayPartner();
+					}
+					else if(partner.getGangwayPartner() != this) {
+						removeGangwayPartner();
+					}
+				}
+				else {
+					removeGangwayPartner();
+				}
 			}
 		}
 	}
@@ -336,9 +512,9 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 						double stiffness = normalMass * frequecy * frequecy;
 						double damping = normalMass * frequecy * dampingRate * 2;
 
+						SubLevelPhysicsSystem physics = SubLevelContainer.getContainer(subLevel.getLevel()).physicsSystem();
 						if(joint == null || !joint.isValid()) {
 							removeJoint();
-							SubLevelPhysicsSystem physics = SubLevelContainer.getContainer(subLevel.getLevel()).physicsSystem();
 							double linearDamping = config.couplerPassiveLinearDamping.get();
 							double angularDamping = config.couplerPassiveAngularDamping.get();
 							GenericConstraintConfiguration jointConfig = SimurailJoints.couplerJoint(
@@ -356,9 +532,13 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 						else {
 							joint.setFrame1(this.jointPos, this.jointRot);
 							joint.setFrame2(partner.jointPos, partner.jointRot);
-							joint.setLimit(ConstraintJointAxis.LINEAR_X, jointLength - 0.0625, jointLength + 0.0625);
-							joint.setMotor(ConstraintJointAxis.LINEAR_X, jointLength, stiffness, damping, false, 0);
+							if(jointLength != lastJointLength) {
+								joint.setLimit(ConstraintJointAxis.LINEAR_X, jointLength - 0.0625, jointLength + 0.0625);
+								joint.setMotor(ConstraintJointAxis.LINEAR_X, jointLength, stiffness, damping, false, 0);
+								physics.getPipeline().wakeUp(subLevel);
+							}
 						}
+						lastJointLength = jointLength;
 					}
 				}
 			}
@@ -407,6 +587,7 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 
 		if(pos != null) {
 			setPartner(pos);
+			tryConnectGangway();
 		}
 	}
 
@@ -414,7 +595,58 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 		if(joint != null) {
 			joint.remove();
 			joint = null;
+			lastJointLength = 0;
 		}
+	}
+
+	public void tryConnectGangway() {
+		if(getGangwayShape() == GangwayFrameShape.NONE || isGangwayPowered()) {
+			return;
+		}
+		GangwayFrame partner = GangwayFrame.findGangwayPartner(this, level);
+		if(partner == null) {
+			return;
+		}
+		setGangwayPartner(partner.getBlockPos());
+		Set<GangwayFrame> visited = new HashSet<>();
+		Couple<GangwayFrame> selfCouple = Couple.create(this, this);
+		Couple<GangwayFrame> partnerCouple = Couple.create(partner, partner);
+		for(int i = 0; i < 15; ++i) {
+			for(boolean cw : Iterate.trueAndFalse) {
+				if(selfCouple.get(cw) != null) {
+					GangwayFrame cSelf = selfCouple.get(cw);
+					GangwayFrame cPartner = partnerCouple.get(cw);
+					GangwayFrameShape selfShape = cSelf.getGangwayShape();
+					GangwayFrameShape partnerShape = cPartner.getGangwayShape();
+					Direction selfOffset = selfShape.adjacentOffset(cSelf.getFacing(), cw);
+					Direction partnerOffset = partnerShape.adjacentOffset(cPartner.getFacing(), !cw);
+					BlockPos selfPos = cSelf.getBlockPos().relative(selfOffset);
+					BlockPos partnerPos = cPartner.getBlockPos().relative(partnerOffset);
+					if(level.getBlockEntity(selfPos) instanceof GangwayFrame selfNeighbor &&
+							!visited.contains(selfNeighbor) &&
+							selfShape.adjacentTo(cw).contains(selfNeighbor.getGangwayShape()) &&
+							level.getBlockEntity(partnerPos) instanceof GangwayFrame partnerNeighbor &&
+							selfNeighbor.getGangwayShape().connectsTo() == partnerNeighbor.getGangwayShape()) {
+						visited.add(selfNeighbor);
+						selfCouple.set(cw, selfNeighbor);
+						partnerCouple.set(cw, partnerNeighbor);
+						selfNeighbor.setGangwayPartner(partnerPos);
+					}
+					else {
+						selfCouple.set(cw, null);
+						partnerCouple.set(cw, null);
+					}
+				}
+			}
+		}
+	}
+
+	public void tryDisconnectGangway() {
+		removeGangwayPartner();
+		if(getGangwayShape() == GangwayFrameShape.NONE) {
+			return;
+		}
+		GangwayFrame.getNeighbors(this, level, 15).forEach(GangwayFrame::removeGangwayPartner);
 	}
 
 	@Override
@@ -423,6 +655,21 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 			return List.of(SubLevelContainer.getContainer(level).getSubLevel(partnerSubLevelID));
 		}
 		return List.of();
+	}
+
+	@Override
+	protected AABB createRenderBoundingBox() {
+		return super.createRenderBoundingBox().inflate(4);
+	}
+
+	@Override
+	public void setBlockState(BlockState blockState) {
+		GangwayFrameShape oldShape = getGangwayShape();
+		super.setBlockState(blockState);
+		GangwayFrameShape newShape = getGangwayShape();
+		if(newShape != oldShape) {
+			removeGangwayPartner();
+		}
 	}
 
 	@Override
@@ -450,6 +697,15 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 			tag.put("partner", NbtUtils.writeBlockPos(partner.getFirst()));
 			if(partner.getSecond() != null) {
 				tag.putUUID("partner_id", partner.getSecond());
+			}
+		}
+
+		Pair<BlockPos, UUID> gangwayPartner = SchematicContextUtil.writeTransform(gangwayPartnerPos, gangwayPartnerSubLevelID);
+
+		if(gangwayPartner.getFirst() != null) {
+			tag.put("gangway_partner", NbtUtils.writeBlockPos(gangwayPartner.getFirst()));
+			if(gangwayPartner.getSecond() != null) {
+				tag.putUUID("gangway_partner_id", gangwayPartner.getSecond());
 			}
 		}
 	}
@@ -482,6 +738,13 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 
 		partnerPos = partner.getFirst();
 		partnerSubLevelID = partner.getSecond();
+
+		Pair<BlockPos, UUID> gangwayPartner = SchematicContextUtil.readTransform(
+				NbtUtils.readBlockPos(tag, "gangway_partner").orElse(null),
+				tag.hasUUID("gangway_partner_id") ? tag.getUUID("gangway_partner_id") : null);
+
+		gangwayPartnerPos = gangwayPartner.getFirst();
+		gangwayPartnerSubLevelID = gangwayPartner.getSecond();
 	}
 
 	// Mutable physics fields
@@ -493,4 +756,6 @@ public class AutomaticCouplerBlockEntity extends SmartBlockEntity implements Blo
 
 	protected final Vector3d jointDir = new Vector3d();
 	protected final Quaterniond jointRot = new Quaterniond();
+
+	protected final Vector3d gangwayCenterOffset = new Vector3d();
 }

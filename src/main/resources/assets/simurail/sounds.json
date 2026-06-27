@@ -16,5 +16,23 @@
 			}
 		],
 		"subtitle": "subtitles.simurail.block.coupler.disconnect"
+	},
+	"block.gangway.connect": {
+		"sounds": [
+			{
+				"type": "event",
+				"name": "simulated:block.docking_connector.extend"
+			}
+		],
+		"subtitle": "subtitles.simurail.block.gangway.connect"
+	},
+	"block.gangway.disconnect": {
+		"sounds": [
+			{
+				"type": "event",
+				"name": "simulated:block.docking_connector.retract"
+			}
+		],
+		"subtitle": "subtitles.simurail.block.gangway.disconnect"
 	}
 }

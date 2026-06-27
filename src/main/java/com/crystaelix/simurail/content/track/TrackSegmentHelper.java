@@ -109,7 +109,7 @@ public class TrackSegmentHelper {
 								continue;
 							}
 							double orientScore = 1 - Math.abs(checkLocalDir.dot(checkTrackDelta) / checkTrackDelta.length());
-							if(orientScore > 0.75) {
+							if(orientScore > 0.7) {
 								continue;
 							}
 							double distScore = SimurailMath.distanceSquaredLinePoint(checkTrackCenter, checkTrackDelta, checkLocalPos);

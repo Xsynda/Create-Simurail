@@ -2,8 +2,10 @@ package com.crystaelix.simurail.content;
 
 import com.crystaelix.simurail.Simurail;
 import com.crystaelix.simurail.content.automatic_coupler.AutomaticCouplerBlock;
+import com.crystaelix.simurail.content.automatic_coupler.AutomaticCouplerBlockItem;
 import com.crystaelix.simurail.content.bogey.PhysicsBogeyBlock;
 import com.crystaelix.simurail.content.bogey.PhysicsBogeyBlockItem;
+import com.crystaelix.simurail.content.gangway_frame.GangwayFrameBlock;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -25,7 +27,14 @@ public class SimurailBlocks {
 	public static final BlockEntry<AutomaticCouplerBlock> AUTOMATIC_COUPLER = REGISTRATE.
 			block("automatic_coupler", AutomaticCouplerBlock::new).
 			initialProperties(SharedProperties::softMetal).
-			properties(p -> p.noOcclusion().mapColor(MapColor.NONE).sound(SoundType.METAL)).
+			properties(p -> p.noOcclusion().dynamicShape().mapColor(MapColor.NONE).sound(SoundType.METAL)).
+			item(AutomaticCouplerBlockItem::new).
+			build().
+			register();
+	public static final BlockEntry<GangwayFrameBlock> GANGWAY_FRAME = REGISTRATE.
+			block("gangway_frame", GangwayFrameBlock::new).
+			initialProperties(SharedProperties::softMetal).
+			properties(p -> p.noOcclusion().dynamicShape().mapColor(MapColor.NONE).sound(SoundType.METAL)).
 			simpleItem().
 			register();
 

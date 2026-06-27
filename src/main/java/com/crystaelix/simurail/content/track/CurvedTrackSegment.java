@@ -60,7 +60,7 @@ public final class CurvedTrackSegment extends TrackSegment {
 	public Frame3d frame(double t, Frame3d dest) {
 		double curveT = curveT(t);
 
-		SimurailMath.bezierVelocity(curve, curveT, dest.direction);
+		SimurailMath.velocity(curve, curveT, dest.direction);
 
 		Vector3d normal1 = JOMLConversion.toJOML(curve.normals.getFirst());
 		Vector3d normal2 = JOMLConversion.toJOML(curve.normals.getSecond());
@@ -69,14 +69,14 @@ public final class CurvedTrackSegment extends TrackSegment {
 		dest.direction.cross(dest.vertical, dest.lateral);
 		dest.lateral.cross(dest.direction, dest.vertical);
 
-		SimurailMath.bezierPosition(curve, curveT, dest.position);
+		SimurailMath.position(curve, curveT, dest.position);
 
 		return dest.normalize();
 	}
 
 	@Override
 	public Vector3d curvature(double t, Vector3d dest) {
-		return SimurailMath.bezierCurvature(curve, curveT(t), dest);
+		return SimurailMath.curvature(curve, curveT(t), dest);
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
-import com.crystaelix.simurail.api.math.BezierControlPoints;
+import com.crystaelix.simurail.api.math.CubicBezier3dc;
 import com.crystaelix.simurail.api.math.SimurailMath;
 import com.crystaelix.simurail.api.track.TrackTypeOverrides;
 import com.crystaelix.simurail.api.util.SubLevelUtil;
@@ -68,13 +68,13 @@ public class CurvedTrackSegmentCache {
 		removeCurve(curve);
 		BoundingBox3d bounds = new BoundingBox3d(curve.getBounds());
 		int segmentCount = curve.getSegmentCount();
-		BezierControlPoints controlPoints = SimurailMath.cachedControlPoints(curve);
+		CubicBezier3dc controlPoints = SimurailMath.cachedControlPoints(curve);
 		for(int i = 0; i <= segmentCount; ++i) {
 			double t = (double)i / segmentCount;
 			bounds.expandTo(
-					SimurailMath.bezierPosition(controlPoints, t, 0),
-					SimurailMath.bezierPosition(controlPoints, t, 1),
-					SimurailMath.bezierPosition(controlPoints, t, 2));
+					controlPoints.position(t, 0),
+					controlPoints.position(t, 1),
+					controlPoints.position(t, 2));
 		}
 		bounds.expand(0.5);
 		int minChunkX = Mth.floor(bounds.minX / CHUNK_FACTOR);

@@ -313,7 +313,7 @@ public class PhysicsBogeyAxle {
 					BezierConnection connection = curve.curve();
 					double graphLength = connection.getLength();
 					double quadratureLength = ((BezierConnectionExtension)connection).simurail$quadratureLength();
-					double quadraturePos = SimurailMath.bezierLength(connection, 0, curve.curveT(t));
+					double quadraturePos = SimurailMath.length(connection, 0, curve.curveT(t));
 					trackPoint.position = graphLength / quadratureLength * quadraturePos;
 				}
 				else {

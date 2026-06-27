@@ -17,7 +17,7 @@ public class SimurailComputerBehaviour extends AbstractComputerBehaviour {
 	SyncedPeripheral<?> peripheral;
 	Supplier<SyncedPeripheral<?>> peripheralSupplier;
 	SmartBlockEntity be;
-	
+
 	public SimurailComputerBehaviour(SmartBlockEntity be) {
 		super(be);
 		this.peripheralSupplier = getPeripheralFor(be);

@@ -16,7 +16,9 @@ public class SimurailSoundEvents {
 
 	public static final Supplier<SoundEvent>
 	COUPLER_CONNECT = sound("block.coupler.connect"),
-	COUPLER_DISCONNECT = sound("block.coupler.disconnect");
+	COUPLER_DISCONNECT = sound("block.coupler.disconnect"),
+	GANGWAY_CONNECT = sound("block.gangway.connect"),
+	GANGWAY_DISCONNECT = sound("block.gangway.disconnect");
 
 	public static void register(IEventBus modEventBus) {
 		REGISTRAR.register(modEventBus);

@@ -4,6 +4,8 @@ import org.joml.Matrix3d;
 import org.joml.Quaterniondc;
 import org.joml.Vector3dc;
 
+import dev.ryanhcode.sable.companion.math.Pose3dc;
+
 public interface Basis3dc {
 
 	Basis3dc I = new Basis3d();
@@ -19,6 +21,10 @@ public interface Basis3dc {
 	Basis3d orthogonalize(Basis3d dest);
 
 	Basis3d normalize(Basis3d dest);
+
+	Basis3d transform(Pose3dc pose, Basis3d dest);
+
+	Basis3d transformInverse(Pose3dc pose, Basis3d dest);
 
 	Basis3d transform(Quaterniondc quat, Basis3d dest);
 

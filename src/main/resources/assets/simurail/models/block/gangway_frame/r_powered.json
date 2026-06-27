@@ -1,0 +1,22 @@
+{
+	"parent": "block/block",
+	"render_type": "solid",
+	"textures": {
+		"particle": "simurail:block/gangway_frame/bellows",
+		"base": "simurail:block/gangway_frame/base_powered"
+	},
+	"elements": [
+		{
+			"from": [12, 0, 0],
+			"to": [14, 16, 2],
+			"faces": {
+				"north": {"uv": [0, 2, 16, 4], "rotation": 90, "texture": "#base", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 2], "rotation": 90, "texture": "#base"},
+				"south": {"uv": [0, 2, 16, 4], "rotation": 270, "texture": "#base"},
+				"west": {"uv": [0, 0, 16, 2], "rotation": 270, "texture": "#base"},
+				"up": {"uv": [14, 6, 16, 8], "texture": "#base"},
+				"down": {"uv": [14, 6, 16, 8], "rotation": 180, "texture": "#base"}
+			}
+		}
+	]
+}

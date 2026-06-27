@@ -1,0 +1,4 @@
+newmtl Material
+map_Kd #base
+newmtl MaterialSide
+map_Kd #side

@@ -1,13 +1,5 @@
 {
 	"variants": {
-		"facing=east,inverted=false": {
-			"model": "simurail:block/physics_bogey/normal",
-			"y": 90
-		},
-		"facing=west,inverted=false": {
-			"model": "simurail:block/physics_bogey/normal",
-			"y": -90
-		},
 		"facing=south,inverted=false": {
 			"model": "simurail:block/physics_bogey/normal",
 			"y": 180
@@ -16,14 +8,15 @@
 			"model": "simurail:block/physics_bogey/normal",
 			"y": 0
 		},
-		"facing=east,inverted=true": {
-			"model": "simurail:block/physics_bogey/inverted",
-			"y": -90
-		},
-		"facing=west,inverted=true": {
-			"model": "simurail:block/physics_bogey/inverted",
+		"facing=east,inverted=false": {
+			"model": "simurail:block/physics_bogey/normal",
 			"y": 90
 		},
+		"facing=west,inverted=false": {
+			"model": "simurail:block/physics_bogey/normal",
+			"y": -90
+		},
+
 		"facing=south,inverted=true": {
 			"model": "simurail:block/physics_bogey/inverted",
 			"y": 0
@@ -31,6 +24,14 @@
 		"facing=north,inverted=true": {
 			"model": "simurail:block/physics_bogey/inverted",
 			"y": 180
+		},
+		"facing=east,inverted=true": {
+			"model": "simurail:block/physics_bogey/inverted",
+			"y": -90
+		},
+		"facing=west,inverted=true": {
+			"model": "simurail:block/physics_bogey/inverted",
+			"y": 90
 		}
 	}
 }

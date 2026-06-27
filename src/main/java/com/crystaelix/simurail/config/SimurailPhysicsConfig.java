@@ -11,7 +11,7 @@ public class SimurailPhysicsConfig extends SimurailBaseConfig {
 	public final ConfigFloat bogeyLateralSpringFrequency = f(10, 0, Float.MAX_VALUE, "bogeyLateralSpringFrequency", Units.angularVelocity, Comments.bogeyLateralSpringFrequency);
 	public final ConfigFloat bogeyLateralSpringDampingRate = f(1.2F, 0, Float.MAX_VALUE, "bogeyLateralSpringDampingRate", Comments.bogeyLateralSpringDampingRate);
 	public final ConfigFloat bogeyLateralSpringMaxForce = f(10000, 0, Float.MAX_VALUE, "bogeyLateralSpringMaxForce", Units.force, Comments.bogeyLateralSpringMaxForce);
-	public final ConfigFloat bogeyAngularTiltFactor = f(50, 0, Float.MAX_VALUE, "bogeyAngularTiltFactor", Units.acceleration, Comments.bogeyAngularTiltFactor);
+	public final ConfigFloat bogeyAngularTiltFactor = f(100, 0, Float.MAX_VALUE, "bogeyAngularTiltFactor", Units.acceleration, Comments.bogeyAngularTiltFactor);
 	public final ConfigFloat bogeyAngularSpringFrequency = f(15, 0, Float.MAX_VALUE, "bogeyAngularSpringFrequency", Units.angularVelocity, Comments.bogeyAngularSpringFrequency);
 	public final ConfigFloat bogeyAngularSpringDampingRate = f(1.2F, 0, Float.MAX_VALUE, "bogeyAngularSpringDampingRate", Comments.bogeyAngularSpringDampingRate);
 	public final ConfigFloat bogeyAngularSpringMaxTorque = f(5000, 0, Float.MAX_VALUE, "bogeyAngularSpringMaxTorque", Units.torque, Comments.bogeyAngularSpringMaxTorque);

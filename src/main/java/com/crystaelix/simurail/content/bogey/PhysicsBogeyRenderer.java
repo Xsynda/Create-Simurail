@@ -35,7 +35,6 @@ public class PhysicsBogeyRenderer extends KineticBlockEntityRenderer<PhysicsBoge
 	protected void renderSafe(PhysicsBogeyBlockEntity be, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay) {
 		super.renderSafe(be, partialTick, poseStack, bufferSource, light, overlay);
 		Level level = be.getLevel();
-
 		if(VisualizationManager.supportsVisualization(level)) {
 			return;
 		}

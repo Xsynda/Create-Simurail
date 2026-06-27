@@ -1,6 +1,7 @@
 {
 	"block.simurail.physics_bogey": "Carrello Fisico",
 	"block.simurail.automatic_coupler": "Accopiatore Automatico",
+	"block.simurail.gangway_frame": "Gangway Frame",
 
 	"item.simurail.inverted_physics_bogey": "Carrello Fisico Invertito",
 	"item.simurail.steering_connector": "Connettore dello Sterzo",
@@ -54,6 +55,8 @@
 
 	"subtitles.simurail.block.coupler.connect": "Accopiatore si Connette",
 	"subtitles.simurail.block.coupler.disconnect": "Accopiatore si Disconette",
+	"subtitles.simurail.block.gangway.connect": "Gangway connects",
+	"subtitles.simurail.block.gangway.disconnect": "Gangway disconnects",
 
 	"simulated_section.simurail.simurail": "Simurail",
 

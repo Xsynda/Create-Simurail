@@ -1,6 +1,7 @@
 {
 	"block.simurail.physics_bogey": "物理转向架",
 	"block.simurail.automatic_coupler": "自动车钩",
+	"block.simurail.gangway_frame": "风挡框",
 
 	"item.simurail.inverted_physics_bogey": "倒置物理转向架",
 	"item.simurail.steering_connector": "转向连接器",
@@ -54,6 +55,8 @@
 
 	"subtitles.simurail.block.coupler.connect": "车钩：连接",
 	"subtitles.simurail.block.coupler.disconnect": "车钩：断开",
+	"subtitles.simurail.block.gangway.connect": "风挡：连接",
+	"subtitles.simurail.block.gangway.disconnect": "风挡：断开",
 
 	"simulated_section.simurail.simurail": "模拟铁道",
 

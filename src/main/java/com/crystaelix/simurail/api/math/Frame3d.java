@@ -178,7 +178,7 @@ public class Frame3d implements Frame3dc {
 		pose.transformNormalInverse(vertical, dest.vertical);
 		pose.transformNormalInverse(lateral, dest.lateral);
 		pose.transformPositionInverse(position, dest.position);
-		return this;
+		return dest;
 	}
 
 	public Frame3d transformInverse(Pose3dc pose) {

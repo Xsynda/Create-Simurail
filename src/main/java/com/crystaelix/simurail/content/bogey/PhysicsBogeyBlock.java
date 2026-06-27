@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class PhysicsBogeyBlock extends HorizontalKineticBlock implements IBE<PhysicsBogeyBlockEntity>, BlockSubLevelAssemblyListener, ProperWaterloggedBlock {
@@ -129,6 +130,11 @@ public class PhysicsBogeyBlock extends HorizontalKineticBlock implements IBE<Phy
 	@Override
 	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return state.getValue(INVERTED) ? INVERTED_SHAPE : SHAPE;
+	}
+
+	@Override
+	public VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
+		return Shapes.block();
 	}
 
 	@Override

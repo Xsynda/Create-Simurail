@@ -1,5 +1,7 @@
 package com.crystaelix.simurail.api.math;
 
+import java.util.Arrays;
+
 import org.joml.Matrix3dc;
 import org.joml.Quaterniond;
 import org.joml.Quaterniondc;
@@ -355,26 +357,26 @@ public class SimurailMath {
 
 	// Bezier Curves
 
-	public static BezierControlPoints controlPoints(BezierConnection curve) {
+	public static CubicBezier3dc controlPoints(BezierConnection curve) {
 		double handleLength = curve.getHandleLength();
 		Vector3d end1 = JOMLConversion.toJOML(curve.starts.getFirst());
 		Vector3d end2 = JOMLConversion.toJOML(curve.starts.getSecond());
 		Vector3d handle1 = JOMLConversion.toJOML(curve.axes.getFirst()).normalize(handleLength).add(end1);
 		Vector3d handle2 = JOMLConversion.toJOML(curve.axes.getSecond()).normalize(handleLength).add(end2);
-		return new BezierControlPoints(end1, end2, handle1, handle2);
+		return new CubicBezier3d(end1, end2, handle1, handle2);
 	}
 
-	public static BezierControlPoints cachedControlPoints(BezierConnection curve) {
+	public static CubicBezier3dc cachedControlPoints(BezierConnection curve) {
 		return ((BezierConnectionExtension)curve).simurail$controlPoints();
 	}
 
-	public static double segmentToCurveT(BezierControlPoints points, double segmentStartT, double segmentEndT, double segmentLinearT, int iterations) {
-		double ft0x = bezierPosition(points, segmentStartT, 0);
-		double ft0y = bezierPosition(points, segmentStartT, 1);
-		double ft0z = bezierPosition(points, segmentStartT, 2);
-		double ft1x = bezierPosition(points, segmentEndT, 0);
-		double ft1y = bezierPosition(points, segmentEndT, 1);
-		double ft1z = bezierPosition(points, segmentEndT, 2);
+	public static double segmentToCurveT(CubicBezier3dc points, double segmentStartT, double segmentEndT, double segmentLinearT, int iterations) {
+		double ft0x = points.position(segmentStartT, 0);
+		double ft0y = points.position(segmentStartT, 1);
+		double ft0z = points.position(segmentStartT, 2);
+		double ft1x = points.position(segmentEndT, 0);
+		double ft1y = points.position(segmentEndT, 1);
+		double ft1z = points.position(segmentEndT, 2);
 		double px = Mth.lerp(segmentLinearT, ft0x, ft1x);
 		double py = Mth.lerp(segmentLinearT, ft0y, ft1y);
 		double pz = Mth.lerp(segmentLinearT, ft0z, ft1z);
@@ -382,15 +384,15 @@ public class SimurailMath {
 		double t = Mth.lerp(segmentLinearT, segmentStartT, segmentEndT);
 
 		for(int i = 0; i < iterations; ++i) {
-			double wtx = bezierPosition(points, t, 0) - px;
-			double wty = bezierPosition(points, t, 1) - py;
-			double wtz = bezierPosition(points, t, 2) - pz;
-			double vtx = bezierVelocity(points, t, 0);
-			double vty = bezierVelocity(points, t, 1);
-			double vtz = bezierVelocity(points, t, 2);
-			double atx = bezierAcceleration(points, t, 0);
-			double aty = bezierAcceleration(points, t, 1);
-			double atz = bezierAcceleration(points, t, 2);
+			double wtx = points.position(t, 0) - px;
+			double wty = points.position(t, 1) - py;
+			double wtz = points.position(t, 2) - pz;
+			double vtx = points.velocity(t, 0);
+			double vty = points.velocity(t, 1);
+			double vtz = points.velocity(t, 2);
+			double atx = points.acceleration(t, 0);
+			double aty = points.acceleration(t, 1);
+			double atz = points.acceleration(t, 2);
 
 			double d1d = wtx * vtx + wty * vty + wtz * vtz;
 			double d2d = wtx * atx + wty * aty + wtz * atz + Vector3d.lengthSquared(vtx, vty, vtz);
@@ -415,105 +417,46 @@ public class SimurailMath {
 		return segmentToCurveT(cachedControlPoints(curve), segmentStartT, segmentEndT, segmentLinearT, iterations);
 	}
 
-	private static final double[] X7 = {
-			0,
-			0.4058451513773972, -0.4058451513773972,
-			0.7415311855993945, -0.7415311855993945,
-			0.9491079123427585, -0.9491079123427585,
-	};
+	public static double length(BezierConnection curve, double t0, double t1) {
+		return cachedControlPoints(curve).length(t0, t1);
+	}
 
-	private static final double[] W7 = {
-			0.4179591836734694,
-			0.3818300505051189, 0.3818300505051189,
-			0.2797053914892766, 0.2797053914892766,
-			0.1294849661688697, 0.1294849661688697,
-	};
+	public static Vector3d position(BezierConnection curve, double t, Vector3d dest) {
+		return cachedControlPoints(curve).position(t, dest);
+	}
 
-	public static double bezierLength(BezierControlPoints points, double t0, double t1) {
-		double s = 0;
-		double h = (t1 - t0) * 0.5;
-		double m = (t0 + t1) * 0.5;
-		for(int i = 0; i < 7; i++) {
-			double t = h * X7[i] + m;
-			double vx = bezierVelocity(points, t, 0);
-			double vy = bezierVelocity(points, t, 1);
-			double vz = bezierVelocity(points, t, 2);
-			s += W7[i] * Vector3d.length(vx, vy, vz);
+	public static Vector3d velocity(BezierConnection curve, double t, Vector3d dest) {
+		return cachedControlPoints(curve).velocity(t, dest);
+	}
+
+	public static Vector3d curvature(BezierConnection curve, double t, Vector3d dest) {
+		return cachedControlPoints(curve).curvature(t, dest);
+	}
+
+	public static double f2t(double f, double[] lut) {
+		if(f <= 0) {
+			return 0;
 		}
-		return h * s;
-	}
-
-	public static double bezierLength(BezierConnection curve, double t0, double t1) {
-		return bezierLength(cachedControlPoints(curve), t0, t1);
-	}
-
-	public static double bezierPosition(BezierControlPoints points, double t, int component) {
-		double p01 = Mth.lerp(t, points.end1().get(component), points.handle1().get(component));
-		double p12 = Mth.lerp(t, points.handle1().get(component), points.handle2().get(component));
-		double p23 = Mth.lerp(t, points.handle2().get(component), points.end2().get(component));
-		double p02 = Mth.lerp(t, p01, p12);
-		double p13 = Mth.lerp(t, p12, p23);
-		return Mth.lerp(t, p02, p13);
-	}
-
-	public static Vector3d bezierPosition(BezierControlPoints points, double t, Vector3d dest) {
-		return dest.set(bezierPosition(points, t, 0), bezierPosition(points, t, 1), bezierPosition(points, t, 2));
-	}
-
-	public static Vector3d bezierPosition(BezierConnection curve, double t, Vector3d dest) {
-		return bezierPosition(cachedControlPoints(curve), t, dest);
-	}
-
-	public static double bezierVelocity(BezierControlPoints points, double t, int component) {
-		double q0 = 3 * (points.handle1().get(component) - points.end1().get(component));
-		double q1 = 3 * (points.handle2().get(component) - points.handle1().get(component));
-		double q2 = 3 * (points.end2().get(component) - points.handle2().get(component));
-		double q01 = Mth.lerp(t, q0, q1);
-		double q12 = Mth.lerp(t, q1, q2);
-		return Mth.lerp(t, q01, q12);
-	}
-
-	public static Vector3d bezierVelocity(BezierControlPoints points, double t, Vector3d dest) {
-		return dest.set(bezierVelocity(points, t, 0), bezierVelocity(points, t, 1), bezierVelocity(points, t, 2));
-	}
-
-	public static Vector3d bezierVelocity(BezierConnection curve, double t, Vector3d dest) {
-		return bezierVelocity(cachedControlPoints(curve), t, dest);
-	}
-
-	public static double bezierAcceleration(BezierControlPoints points, double t, int component) {
-		double q0 = 3 * (points.handle1().get(component) - points.end1().get(component));
-		double q1 = 3 * (points.handle2().get(component) - points.handle1().get(component));
-		double q2 = 3 * (points.end2().get(component) - points.handle2().get(component));
-		double r0 = 2 * (q1 - q0);
-		double r1 = 2 * (q2 - q1);
-		return Mth.lerp(t, r0, r1);
-	}
-
-	public static Vector3d bezierCurvature(BezierControlPoints points, double t, Vector3d dest) {
-		double vx = bezierVelocity(points, t, 0);
-		double vy = bezierVelocity(points, t, 1);
-		double vz = bezierVelocity(points, t, 2);
-		double vLenSq = Vector3d.lengthSquared(vx, vy, vz);
-
-		if(vLenSq < EPSILON_SQ) {
-			return dest.zero();
+		if(f >= 1) {
+			return 1;
 		}
-
-		double ax = bezierAcceleration(points, t, 0);
-		double ay = bezierAcceleration(points, t, 1);
-		double az = bezierAcceleration(points, t, 2);
-
-		double vLenSqInv = 1 / vLenSq;
-		double va = (vx * ax + vy * ay + vz * az) * vLenSqInv;
-		double cx = (ax - vx * va) * vLenSqInv;
-		double cy = (ay - vy * va) * vLenSqInv;
-		double cz = (az - vz * va) * vLenSqInv;
-
-		return dest.set(cx, cy, cz);
-	}
-
-	public static Vector3d bezierCurvature(BezierConnection curve, double t, Vector3d dest) {
-		return bezierCurvature(cachedControlPoints(curve), t, dest);
+		int segments = lut.length - 1;
+		double targetLength = f * lut[segments];
+		int index = Arrays.binarySearch(lut, targetLength);
+		if(index >= 0) {
+			if(index >= segments) {
+				return 1;
+			}
+			return (double)index / segments;
+		}
+		int insertionPoint = -index - 1;
+		int i = insertionPoint - 1;
+		if(i < 0) {
+			return 0;
+		}
+		if(i >= segments) {
+			return 1;
+		}
+		return (i + (targetLength - lut[i]) / (lut[i + 1] - lut[i])) / segments;
 	}
 }

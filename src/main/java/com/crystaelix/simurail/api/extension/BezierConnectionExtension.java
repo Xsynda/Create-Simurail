@@ -1,10 +1,10 @@
 package com.crystaelix.simurail.api.extension;
 
-import com.crystaelix.simurail.api.math.BezierControlPoints;
+import com.crystaelix.simurail.api.math.CubicBezier3dc;
 
 public interface BezierConnectionExtension {
 
-	BezierControlPoints simurail$controlPoints();
+	CubicBezier3dc simurail$controlPoints();
 
 	double simurail$quadratureLength();
 }

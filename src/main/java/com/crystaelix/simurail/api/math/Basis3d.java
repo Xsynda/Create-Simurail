@@ -5,6 +5,8 @@ import org.joml.Quaterniondc;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
+import dev.ryanhcode.sable.companion.math.Pose3dc;
+
 public class Basis3d implements Basis3dc {
 
 	public final Vector3d direction;
@@ -112,6 +114,36 @@ public class Basis3d implements Basis3dc {
 	}
 
 	@Override
+	public Basis3d transform(Pose3dc pose, Basis3d dest) {
+		pose.transformNormal(direction, dest.direction);
+		pose.transformNormal(vertical, dest.vertical);
+		pose.transformNormal(lateral, dest.lateral);
+		return dest;
+	}
+
+	public Basis3d transform(Pose3dc pose) {
+		pose.transformNormal(direction);
+		pose.transformNormal(vertical);
+		pose.transformNormal(lateral);
+		return this;
+	}
+
+	@Override
+	public Basis3d transformInverse(Pose3dc pose, Basis3d dest) {
+		pose.transformNormalInverse(direction, dest.direction);
+		pose.transformNormalInverse(vertical, dest.vertical);
+		pose.transformNormalInverse(lateral, dest.lateral);
+		return dest;
+	}
+
+	public Basis3d transformInverse(Pose3dc pose) {
+		pose.transformNormalInverse(direction);
+		pose.transformNormalInverse(vertical);
+		pose.transformNormalInverse(lateral);
+		return this;
+	}
+
+	@Override
 	public Basis3d transform(Quaterniondc quat, Basis3d dest) {
 		quat.transform(direction, dest.direction);
 		quat.transform(vertical, dest.vertical);
@@ -131,7 +163,7 @@ public class Basis3d implements Basis3dc {
 		quat.transformInverse(direction, dest.direction);
 		quat.transformInverse(vertical, dest.vertical);
 		quat.transformInverse(lateral, dest.lateral);
-		return this;
+		return dest;
 	}
 
 	public Basis3d transformInverse(Quaterniondc quat) {
